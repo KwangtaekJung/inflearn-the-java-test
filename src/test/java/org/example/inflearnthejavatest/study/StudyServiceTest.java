@@ -9,6 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
 
@@ -20,11 +23,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+@SpringBootTest
 @ExtendWith(MockitoExtension.class)
+@ActiveProfiles("test")
 class StudyServiceTest {
 
     @Mock MemberService memberService;
-    @Mock StudyRepository studyRepository;
+    @Autowired StudyRepository studyRepository;
 
     @Test
     @DisplayName("Mock Stubbing Test")
@@ -83,7 +88,7 @@ class StudyServiceTest {
         Study study = new Study(10, "TestStudy");
 
         when(memberService.findById(1L)).thenReturn(Optional.of(member));
-        when(studyRepository.save(study)).thenReturn(study);
+        //when(studyRepository.save(study)).thenReturn(study); // 실제 DB 이용할 것이므로 stub 부분은 생략함.
 
         //when
         studyService.createNewStudy(1L, study);
@@ -104,7 +109,7 @@ class StudyServiceTest {
         StudyService studyService = new StudyService(memberService, studyRepository);
         Study study = new Study(10, "더 자바 테스트");
         assertNull(study.getOpenedDateTime());
-        when(studyRepository.save(study)).thenReturn(study);
+        //when(studyRepository.save(study)).thenReturn(study);  //실제 DB 이용하므로 stub 부분은 주석처리함.
 
         //When
         studyService.openStudy(study);
