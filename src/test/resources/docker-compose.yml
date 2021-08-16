@@ -4,7 +4,7 @@ services:
   study-db:
     image: postgres
     ports:
-      - 5432:5432
+      - 5432
     environment:
       POSTGRES_PASSWORD: study
       POSTGRES_USER: study
