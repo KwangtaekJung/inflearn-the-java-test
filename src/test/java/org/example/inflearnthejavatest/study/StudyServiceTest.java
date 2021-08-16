@@ -46,12 +46,16 @@ import static org.mockito.Mockito.when;
 @ContextConfiguration(initializers = StudyServiceTest.ContainerPropertyInitializer.class)
 class StudyServiceTest {
 
-    @Mock MemberService memberService;
-    @Autowired StudyRepository studyRepository;
+    @Mock
+    MemberService memberService;
+    @Autowired
+    StudyRepository studyRepository;
 
-    @Autowired Environment environment;
+    @Autowired
+    Environment environment;
 
-    @Value("${container.port}") int port;
+    @Value("${container.port}")
+    int port;
 
     @Container
 //    static PostgreSQLContainer postgreSQLContainer = new PostgreSQLContainer("postgres")
@@ -127,7 +131,7 @@ class StudyServiceTest {
         assertEquals("kim", byId.get().getName());
 
         // 두번재 호출
-        assertThrows(RuntimeException.class, ()-> {
+        assertThrows(RuntimeException.class, () -> {
             memberService.findById(2L);
         });
 

@@ -10,11 +10,13 @@ import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 @Entity
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 public class Study {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Long id;
     private String name;
     private StudyStatus status = StudyStatus.DRAFT;

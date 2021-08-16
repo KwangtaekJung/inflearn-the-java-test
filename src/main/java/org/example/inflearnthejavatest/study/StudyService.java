@@ -13,7 +13,7 @@ public class StudyService {
 
     public StudyService(MemberService memberService, StudyRepository studyRepository) {
         assert memberService != null;
-        assert  studyRepository != null;
+        assert studyRepository != null;
         this.memberService = memberService;
         this.studyRepository = studyRepository;
     }
