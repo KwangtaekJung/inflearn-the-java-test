@@ -4,6 +4,9 @@ import org.example.inflearnthejavatest.domain.Member;
 import org.example.inflearnthejavatest.domain.Study;
 import org.example.inflearnthejavatest.domain.StudyStatus;
 import org.example.inflearnthejavatest.member.MemberService;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,6 +15,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.Optional;
 
@@ -26,10 +32,32 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
+@Testcontainers
 class StudyServiceTest {
 
     @Mock MemberService memberService;
     @Autowired StudyRepository studyRepository;
+
+    @Container
+    static PostgreSQLContainer postgreSQLContainer = new PostgreSQLContainer("postgres")
+            .withDatabaseName("studytest");
+
+    @BeforeEach
+    void beforeEach() {
+        studyRepository.deleteAll();
+    }
+
+    // @Testcontainers를 사용하면 아래처럼 수동으로 시작/종료할 필요 없다.
+//    @BeforeAll
+//    static void beforeAll() {
+//        postgreSQLContainer.start();
+////        System.out.println(postgreSQLContainer.getJdbcUrl());
+//    }
+//
+//    @AfterAll
+//    static void afterAll() {
+//        postgreSQLContainer.stop();;
+//    }
 
     @Test
     @DisplayName("Mock Stubbing Test")
