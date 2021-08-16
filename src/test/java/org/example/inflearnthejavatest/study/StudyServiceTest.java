@@ -13,8 +13,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.util.TestPropertyValues;
+import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.env.Environment;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.junit.jupiter.Container;
@@ -35,10 +41,15 @@ import static org.mockito.Mockito.when;
 @ActiveProfiles("test")
 @Testcontainers
 @Slf4j
+@ContextConfiguration(initializers = StudyServiceTest.ContainerPropertyInitializer.class)
 class StudyServiceTest {
 
     @Mock MemberService memberService;
     @Autowired StudyRepository studyRepository;
+
+    @Autowired Environment environment;
+
+    @Value("${container.port}") int port;
 
     @Container
 //    static PostgreSQLContainer postgreSQLContainer = new PostgreSQLContainer("postgres")
@@ -57,7 +68,9 @@ class StudyServiceTest {
     @BeforeEach
     void beforeEach() {
         System.out.println("=======================");
-        System.out.println(postgreSQLContainer.getMappedPort(5432));
+//        System.out.println(postgreSQLContainer.getMappedPort(5432));
+        System.out.println(environment.getProperty("container.port"));
+        System.out.println("port using @Value: " + port);
 //        System.out.println(postgreSQLContainer.getLogs());
         studyRepository.deleteAll();
     }
@@ -161,5 +174,14 @@ class StudyServiceTest {
         assertEquals(StudyStatus.OPENED, study.getStatus());
         assertNotNull(study.getOpenedDateTime());
         verify(memberService, times(1)).notify(study);
+    }
+
+    static class ContainerPropertyInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+
+        @Override
+        public void initialize(ConfigurableApplicationContext context) {
+            TestPropertyValues.of("container.port=" + postgreSQLContainer.getMappedPort(5432))
+                    .applyTo(context.getEnvironment());
+        }
     }
 }
